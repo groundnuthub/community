@@ -101,6 +101,12 @@ public class UserService implements CommunityConstant {
 
     }
 
+    //修改账号信息
+    public int updateHeader(int userId,String headerUrl){
+       return userMapper.updateHeader(userId,headerUrl);
+    }
+
+
     //用户登录
     public Map<String,Object> login(String username,String password,long expiredSeconds) {
         Map<String, Object> map=new HashMap<>();
