@@ -59,7 +59,7 @@ class CommunityApplicationTests implements ApplicationContextAware {
         int rows=userMapper.updateStatus(150,1);
         System.out.println(rows);
 
-        rows=userMapper.updatePassword(150,"13545947031");
+        rows=userMapper.updatePassword(150,"13545947031","sdhaj");
         System.out.println(rows);
 
         rows=userMapper.updateHeader(150,"http://www.nowcoder.com/102.png");
