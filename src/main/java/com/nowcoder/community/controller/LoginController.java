@@ -5,6 +5,8 @@ import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.service.UserService;
 import com.nowcoder.community.util.CommunityConstant;
+import com.nowcoder.community.util.CommunityUtil;
+import com.nowcoder.community.util.MailClient;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
@@ -13,6 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
@@ -23,6 +27,7 @@ import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -36,6 +41,12 @@ public class LoginController implements CommunityConstant {
     @Resource
     private Producer kaptchaProducer;
 
+    @Resource
+    private MailClient mailClient;
+
+    @Resource
+    private TemplateEngine templateEngine;
+
     @Value("server.servlet.context-path")
     private String contextPath;
 
@@ -47,6 +58,11 @@ public class LoginController implements CommunityConstant {
     @RequestMapping(path = "/login",method = RequestMethod.GET)
     public String getLoginPage(){
         return "/site/login";
+    }
+
+    @RequestMapping(path = "/forget",method = RequestMethod.GET)
+    public String getForPassword(){
+        return "/site/forget";
     }
 
     @RequestMapping(path = "/registers",method = RequestMethod.POST)
@@ -137,6 +153,55 @@ public class LoginController implements CommunityConstant {
     public String logout(@CookieValue("ticket") String ticket){
         userService.logOut(ticket);
         return "redirect:/login";
+    }
+
+    //发送验证码邮件
+    @RequestMapping(path = "/forget/code",method = RequestMethod.GET)
+    @ResponseBody
+    public String getVerification(String email,HttpSession session){
+
+        if(StringUtils.isBlank(email)){
+            return CommunityUtil.getJSONString(1, "邮箱不能为空！");
+        }else if(userService.getVerification(email)==null){
+            return CommunityUtil.getJSONString(1, "该邮箱未注册，请输入正确的邮箱（或前去注册新账号）！");
+        }else{
+            //发送验证码邮件
+            String verification = CommunityUtil.generateUUID().substring(0,6);
+            Context context=new Context();
+            context.setVariable("email",email);
+            context.setVariable("Verification",verification);
+            String content=templateEngine.process("/mail/forget",context);
+            session.setAttribute(email+"_verification",verification);
+
+            mailClient.sendMail(email,"找回密码",content);
+            return CommunityUtil.getJSONString(0);
+        }
+
+    }
+
+    //找回密码
+    @RequestMapping(path = "/forget/password",method = RequestMethod.POST)
+    public String getPassword(Model model,HttpSession session,String verifyCode,String email,String password){
+        String verification= (String) session.getAttribute(email+"_verification");
+        if(StringUtils.isBlank(verification)){
+            model.addAttribute("verifyCodeMsg","验证码不能为空");
+            return "/site/forget";
+        }else if(!verification.equalsIgnoreCase(verifyCode)){
+            model.addAttribute("verifyCodeMsg","验证码错误，请重新输入！");
+            return "/site/forget";
+        }
+
+        Map<String, Object> map = userService.getPassword(email, password);
+        if (map.containsKey("user")) {
+            model.addAttribute("msg","修改密码成功，请重新登录");
+            model.addAttribute("target","/login");
+            return "/site/operate-result";
+        } else {
+            model.addAttribute("emailMsg", map.get("emailMsg"));
+            model.addAttribute("passwordMsg", map.get("passwordMsg"));
+            return "/site/forget";
+        }
+
     }
 
 }

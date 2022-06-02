@@ -28,4 +28,5 @@ public interface CommunityConstant {
      */
     int REMEMBER_EXPIRED_SECONDS = 3600 * 24 * 30;
 
+
 }

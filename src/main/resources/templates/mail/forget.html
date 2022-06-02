@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="en">
+<!--解决idea thymeleaf 表达式模板报红波浪线-->
+<!--suppress ALL -->
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <link rel="icon" href="https://static.nowcoder.com/images/logo_87_87.png"/>
@@ -8,10 +10,10 @@
 <body>
 	<div>
 		<p>
-			<b>xxx@xxx.com</b>, 您好!
+			<b th:text="${email}">xxx@xxx.com</b>, 您好!
 		</p>
 		<p>
-			您正在找回牛客账号的密码, 本次操作的验证码为 <b>u5s6dt</b> , 
+			您正在找回牛客账号的密码, 本次操作的验证码为 <b th:text="${Verification}">u5s6dt</b> ,
 			有效时间5分钟, 请您及时进行操作!
 		</p>
 	</div>

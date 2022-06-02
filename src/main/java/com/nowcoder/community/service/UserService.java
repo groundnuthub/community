@@ -101,6 +101,33 @@ public class UserService implements CommunityConstant {
 
     }
 
+    //验证是否有输入的邮箱
+    public User getVerification(String email){
+        return userMapper.selectByEmail(email);
+    }
+
+    //忘记密码
+    public Map<String,Object> getPassword(String email,String password){
+        Map<String,Object> map=new HashMap<>();
+
+        if(StringUtils.isBlank(password)){
+            map.put("passwordMsg","密码不能为空");
+        }else if(StringUtils.isBlank(email)){
+            map.put("emailMsg","邮箱不能为空");
+        }
+        User user=userMapper.selectByEmail(email);
+        if(user==null){
+            map.put("emailMsg","该邮箱未注册，请输入正确的邮箱（或前去注册新账号）");
+        }else {
+            String salt=CommunityUtil.generateUUID().substring(0,5);
+            password=CommunityUtil.MD5(password+salt);
+            userMapper.updatePassword(user.getId(),password,salt);
+            map.put("user",user);
+        }
+
+        return map;
+    }
+
     //修改账号信息
     public int updateHeader(int userId,String headerUrl){
        return userMapper.updateHeader(userId,headerUrl);
