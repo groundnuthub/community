@@ -2,11 +2,14 @@ package com.nowcoder.community.service;
 
 import com.nowcoder.community.dao.DiscussPostMapper;
 import com.nowcoder.community.entity.DiscussPost;
+import com.nowcoder.community.util.SensitiveFilter;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.HtmlUtils;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -14,6 +17,9 @@ public class DiscussPostService {
 
     @Resource
     private DiscussPostMapper discussPostMapper;
+
+    @Resource
+    private SensitiveFilter sensitiveFilter;
 
    public List<DiscussPost> findDiscussPosts(int userId, int begin, int limit){
        return discussPostMapper.selectDiscussPosts(userId,begin,limit);
@@ -24,4 +30,19 @@ public class DiscussPostService {
    public int findDiscussPostCount(@Param("userId") int userId){
        return discussPostMapper.selectDiscussPostCount(userId);
    }
+
+    public int addDiscussPostCount(DiscussPost discussPost){
+       if(discussPost == null){
+           throw new IllegalArgumentException("参数不能为空");
+       }
+       //将页面传到服务器的数据转化成存文本格式使用HtmlUtils的htmlEscape方法
+       discussPost.setTitle(HtmlUtils.htmlEscape(discussPost.getTitle()));
+       discussPost.setContent(HtmlUtils.htmlEscape(discussPost.getContent()));
+
+       //使用过滤器过滤敏感词
+       discussPost.setTitle(sensitiveFilter.filter(discussPost.getTitle()));
+       discussPost.setContent(sensitiveFilter.filter(discussPost.getContent()));
+
+       return discussPostMapper.insertDiscussPosts(discussPost);
+    }
 }

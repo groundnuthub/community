@@ -112,12 +112,13 @@ public class UserController {
     public String updatePassword(String oldPassword,String newPassword,String confirmPassword, Model model) {
         User user = hostHolder.getUsers();
         Map<String,Object> map = userService.updatePassword(user,newPassword,oldPassword,confirmPassword);
-        if(map != null){
+        if (map.isEmpty()){
+            return "redirect:/logout";
+        }else {
             model.addAttribute("oldPasswordMsg",map.get("oldPasswordMsg"));
             model.addAttribute("newPasswordMsg",map.get("newPasswordMsg"));
             model.addAttribute("confirmPasswordMsg",map.get("confirmPasswordMsg"));
-            return "/site/setting";
         }
-            return "redirect:/logout";
+            return "/site/setting";
     }
 }

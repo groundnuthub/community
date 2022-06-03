@@ -15,4 +15,6 @@ public interface DiscussPostMapper {
     //如果有且只有一个参数用于动态的sql查询语句，则该参数必须取别名
     int selectDiscussPostCount(@Param("userId") int userId);
 
+    int insertDiscussPosts(DiscussPost discussPost);
+
 }
