@@ -194,4 +194,8 @@ public class UserService implements CommunityConstant {
     public LoginTicket selectByTicket(String ticket){
         return loginTicketMapper.selectByTicket(ticket);
     }
+
+    public User findUserByName(String username){
+        return userMapper.selectByName(username);
+    }
 }
