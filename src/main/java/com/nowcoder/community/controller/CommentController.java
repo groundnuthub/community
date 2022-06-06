@@ -1,5 +1,6 @@
 package com.nowcoder.community.controller;
 
+import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.Comment;
 import com.nowcoder.community.service.CommentService;
 import com.nowcoder.community.util.HostHolder;
@@ -21,6 +22,7 @@ public class CommentController {
     @Resource
     private HostHolder hostHolder;
 
+    @LoginRequired
     @RequestMapping(path = "/add/{discussPostId}",method = RequestMethod.POST)
     public String addComment(@PathVariable("discussPostId") int discussPostId, Comment comment){
         comment.setUserId(hostHolder.getUsers().getId());

@@ -2,7 +2,10 @@ package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.service.FollowService;
+import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.CommunityUtil;
 import com.nowcoder.community.util.HostHolder;
 import org.apache.commons.lang3.StringUtils;
@@ -26,7 +29,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
-public class UserController {
+public class UserController implements CommunityConstant {
 
     private static final Logger logger= LoggerFactory.getLogger(UserController.class);
 
@@ -45,12 +48,19 @@ public class UserController {
     @Resource
     private HostHolder hostHolder;
 
+    @Resource
+    private LikeService likeService;
+
+    @Resource
+    private FollowService followService;
+
     @LoginRequired
     @RequestMapping(path = "/setting",method = RequestMethod.GET)
     public String getSettingPage(){
         return "/site/setting";
     }
 
+    //上传头像
     @LoginRequired
     @RequestMapping(path = "/upload",method = RequestMethod.POST)
     public String updateHeader(MultipartFile headImage, Model model){
@@ -87,6 +97,7 @@ public class UserController {
         return "redirect:/index";
     }
 
+    //获取头像路径并对头像进行写入硬盘
     @RequestMapping(path = "/header/{fileName}",method = RequestMethod.GET)
     public void getHeader(@PathVariable("fileName") String filename, HttpServletResponse response){
         filename=uploadPath + "/" + filename;
@@ -107,6 +118,7 @@ public class UserController {
         }
     }
 
+    //修改密码
     @LoginRequired
     @RequestMapping(path = "/password",method = RequestMethod.POST)
     public String updatePassword(String oldPassword,String newPassword,String confirmPassword, Model model) {
@@ -120,5 +132,35 @@ public class UserController {
             model.addAttribute("confirmPasswordMsg",map.get("confirmPasswordMsg"));
         }
             return "/site/setting";
+    }
+
+    //个人主页
+    @RequestMapping(path = "/profile/{userId}",method = RequestMethod.GET)
+    public String findUser(@PathVariable("userId") int userId,Model model){
+        User user = userService.findUser(userId);
+        if(user==null){
+            throw new IllegalArgumentException("该用户不存在!");
+        }
+        model.addAttribute("user",user);
+        //点赞数量
+        int likeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("likeCount",likeCount);
+
+        //关注数量
+        long followCount = followService.findFolloweeCount(userId,ENTITY_TYPE_USER);
+        model.addAttribute("followCount",followCount);
+
+        //查询粉丝数量
+        long followerCount = followService.findFollowerCount(ENTITY_TYPE_USER,userId);
+        model.addAttribute("followerCount",followerCount);
+
+        //当前的登录用户是否关注目标实体
+        boolean hasFollowed =false;
+        if(hostHolder.getUsers()!=null){
+            hasFollowed = followService.hasFollowed(hostHolder.getUsers().getId(),ENTITY_TYPE_USER,userId);
+        }
+        model.addAttribute("hasFollowed",hasFollowed);
+
+        return "/site/profile";
     }
 }
