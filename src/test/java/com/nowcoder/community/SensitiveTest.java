@@ -1,5 +1,6 @@
 package com.nowcoder.community;
 
+import com.nowcoder.community.service.AlphaService;
 import com.nowcoder.community.util.SensitiveFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,21 @@ public class SensitiveTest {
         text= "这里可以☆☼赌☆☼博，可以☆☼嫖☆☼娼，可以☆☼吸☆☼毒，可以☆☼开☆☼瓢,可以吸";
         txt = sensitiveFilter.filter(text);
         System.out.println(txt);
+    }
+
+    @Autowired
+    private AlphaService alphaService;
+
+    @Test
+    public void testSaver1(){
+       Object obj= alphaService.savel();
+        System.out.println(obj);
+    }
+
+    @Test
+    public void testSaver2(){
+        Object obj= alphaService.savel2();
+        System.out.println(obj);
     }
 
 }

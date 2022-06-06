@@ -33,6 +33,10 @@ public class CommentService implements CommunityConstant {
         return commentMapper.selectCountByEntity(entityType,entityId);
     }
 
+    public Comment selectCommentById(int id){
+        return commentMapper.selectCommentById(id);
+    }
+
     //进行事务管理
     @Transactional(isolation = Isolation.READ_COMMITTED, propagation = Propagation.REQUIRED)
     public int insertComment(Comment comment){
