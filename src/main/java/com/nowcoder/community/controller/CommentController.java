@@ -59,6 +59,7 @@ public class CommentController implements CommunityConstant {
         eventProducer.fireEvent(event);
 
         if(comment.getEntityType() == ENTITY_TYPE_POST){
+            //评论完成后需要更新es中的帖子信息
             //触发发帖事件
            event = new Event()
                 .setTopic(TOPIC_PUBLISH)

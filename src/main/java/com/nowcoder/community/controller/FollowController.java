@@ -66,6 +66,7 @@ public class FollowController implements CommunityConstant {
         return CommunityUtil.getJSONString(0,"已取消关注");
     }
 
+    //查询某个人的关注列表
     @RequestMapping(path = "/followee/{userId}",method = RequestMethod.GET)
     public String followee(@PathVariable("userId") int userId, Page page, Model model){
         User user = userService.findUser(userId);
@@ -89,6 +90,7 @@ public class FollowController implements CommunityConstant {
         return "/site/followee";
     }
 
+    //查询某个人的被关注列表
     @RequestMapping(path = "/follower/{userId}",method = RequestMethod.GET)
     public String follower(@PathVariable("userId") int userId, Page page, Model model){
         User user = userService.findUser(userId);

@@ -92,4 +92,24 @@ public class EventConsumer implements CommunityConstant {
 
     }
 
+    //消费删帖时间
+    @KafkaListener(topics = {TOPIC_DELETE})
+    public void handleDeleteMessage(ConsumerRecord record){
+
+        if(record==null || record.value() ==null){
+            logger.error("消息内容为空！");
+            return;
+        }
+
+        //JSONObject.parseObject将（）内的数据转换成对应的对象
+        Event event = JSONObject.parseObject(record.value().toString(),Event.class);
+        if(event == null){
+            logger.error("消息格式不正确！");
+            return;
+        }
+
+        elasticsearchService.deleteDiscussPost(event.getEntityId());
+
+    }
+
 }
