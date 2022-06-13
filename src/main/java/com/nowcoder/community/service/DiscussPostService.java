@@ -21,8 +21,8 @@ public class DiscussPostService {
     @Resource
     private SensitiveFilter sensitiveFilter;
 
-   public List<DiscussPost> findDiscussPosts(int userId, int begin, int limit){
-       return discussPostMapper.selectDiscussPosts(userId,begin,limit);
+   public List<DiscussPost> findDiscussPosts(int userId, int begin, int limit,int orderMode){
+       return discussPostMapper.selectDiscussPosts(userId,begin,limit,orderMode);
    }
 
     //@Param注解用于给参数取别名
@@ -60,5 +60,9 @@ public class DiscussPostService {
 
     public int updateStatus(int id,int status){
        return discussPostMapper.updateStatus(id,status);
+    }
+
+    public int updateScore(int id,double score){
+       return discussPostMapper.updateScore(id,score);
     }
 }

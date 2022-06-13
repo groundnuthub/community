@@ -71,7 +71,7 @@ public class ElasticsearchTests {
 
     @Test
     public void testInsertList(){
-        repository.saveAll(postMapper.selectDiscussPosts(101,0,100));
+        /*repository.saveAll(postMapper.selectDiscussPosts(101,0,100));
         repository.saveAll(postMapper.selectDiscussPosts(102,0,100));
         repository.saveAll(postMapper.selectDiscussPosts(103,0,100));
         repository.saveAll(postMapper.selectDiscussPosts(111,0,100));
@@ -85,7 +85,7 @@ public class ElasticsearchTests {
         repository.saveAll(postMapper.selectDiscussPosts(145,0,100));
         repository.saveAll(postMapper.selectDiscussPosts(146,0,100));
         repository.saveAll(postMapper.selectDiscussPosts(149,0,100));
-        repository.saveAll(postMapper.selectDiscussPosts(154,0,100));
+        repository.saveAll(postMapper.selectDiscussPosts(154,0,100));*/
     }
 
     //修改数据（覆盖）

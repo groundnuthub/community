@@ -5,6 +5,10 @@ import com.nowcoder.community.dao.UserMapper;
 import com.nowcoder.community.entity.DiscussPost;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommunityUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -20,6 +24,8 @@ import java.util.Date;
 
 @Service
 public class AlphaService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AlphaService.class);
 
     @Resource
     private UserMapper userMapper;
@@ -90,6 +96,19 @@ public class AlphaService {
                 return "ok";
             }
         });
+    }
+
+    //可以让该方法在多线程环境下,被异步的调用
+   // @Async
+    public void executel(){
+        logger.debug("executel");
+    }
+
+    //可以让该方法在多线程环境下,定时的执行
+    //initialDelay:延迟多长时间执行,fixedRate每次执行间隔多长时间
+   // @Scheduled(initialDelay = 10000,fixedRate = 1000)
+    public void executel1(){
+        logger.debug("executel1");
     }
 
 }
