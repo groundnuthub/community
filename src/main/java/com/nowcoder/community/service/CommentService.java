@@ -55,4 +55,12 @@ public class CommentService implements CommunityConstant {
         return rows;
     }
 
+    public List<Comment> findCommentsByUser(int userId, int begin, int limit){
+        return commentMapper.selectCommentsByUser(userId,begin,limit);
+    }
+
+    public int findCountByUser(int userId){
+        return commentMapper.selectCountByUser(userId);
+    }
+
 }
